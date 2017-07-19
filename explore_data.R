@@ -152,6 +152,56 @@ summary(train[salary!=" 50000+."]$weeks_worked_in_year)
 # Age
 ggplot(data=train, aes(x=salary, y=age)) + geom_boxplot(fill='lightblue')
 
+# Gender
+nrow(train[sex==" Male" & salary==" 50000+."]) / nrow(train[sex==" Male"])
+nrow(train[sex==" Female" & salary==" 50000+."]) / nrow(train[sex==" Female"])
+
+# Education
+edu_data <- subset(train, select=c(education, salary_high))
+edu_data[education==" Masters degree(MA MS MEng MEd MSW MBA)"]$education <- "Masters"
+edu_data$count <- 1
+edu_data <- edu_data[, count_high:=sum(salary_high), by=education]
+edu_data <- edu_data[, count_total:=sum(count), by=education]
+edu_data <- unique(subset(edu_data, select=-c(salary_high, count)))
+edu_data$pct_high_salary <- edu_data$count_high / edu_data$count_total
+edu_data <- edu_data[order(-pct_high_salary)]
+edu_data$education <- factor(edu_data$education, levels=unique(edu_data$education))
+g <- ggplot(data=edu_data, aes(x=education, y=pct_high_salary, fill=education)) + geom_bar(stat='identity')
+g <- g + coord_flip() + guides(fill=FALSE)
+g + scale_x_discrete(limits = rev(levels(edu_data$education)))
+
+# Num person worked for employer
+summary(train[salary==" 50000+."]$num_persons_worked_for_employer)
+summary(train[salary!=" 50000+."]$num_persons_worked_for_employer)
+num_data <- subset(train, select=c(num_persons_worked_for_employer, salary_high))
+num_data[num_persons_worked_for_employer==" Masters degree(MA MS MEng MEd MSW MBA)"]$num_persons_worked_for_employer <- "Masters"
+num_data$count <- 1
+num_data <- num_data[, count_high:=sum(salary_high), by=num_persons_worked_for_employer]
+num_data <- num_data[, count_total:=sum(count), by=num_persons_worked_for_employer]
+num_data <- unique(subset(num_data, select=-c(salary_high, count)))
+num_data$pct_high_salary <- num_data$count_high / num_data$count_total
+num_data <- num_data[order(-pct_high_salary)]
+num_data$num_persons_worked_for_employer <- factor(num_data$num_persons_worked_for_employer, levels=unique(num_data$num_persons_worked_for_employer))
+g <- ggplot(data=num_data, aes(x=num_persons_worked_for_employer, y=pct_high_salary, fill=num_persons_worked_for_employer)) + geom_bar(stat='identity')
+g <- g + coord_flip() + guides(fill=FALSE)
+g + scale_x_discrete(limits = rev(levels(num_data$num_persons_worked_for_employer)))
+
+# Marital status
+summary(train[salary==" 50000+."]$marital_status)
+summary(train[salary!=" 50000+."]$marital_status)
+mar_data <- subset(train, select=c(marital_status, salary_high))
+mar_data[marital_status==" Masters degree(MA MS MEng MEd MSW MBA)"]$marital_status <- "Masters"
+mar_data$count <- 1
+mar_data <- mar_data[, count_high:=sum(salary_high), by=marital_status]
+mar_data <- mar_data[, count_total:=sum(count), by=marital_status]
+mar_data <- unique(subset(mar_data, select=-c(salary_high, count)))
+mar_data$pct_high_salary <- mar_data$count_high / mar_data$count_total
+mar_data <- mar_data[order(-pct_high_salary)]
+mar_data$marital_status <- factor(mar_data$marital_status, levels=unique(mar_data$marital_status))
+g <- ggplot(data=mar_data, aes(x=marital_status, y=pct_high_salary, fill=marital_status)) + geom_bar(stat='identity')
+g <- g + coord_flip() + guides(fill=FALSE)
+g + scale_x_discrete(limits = rev(levels(mar_data$marital_status)))
+
 
 
 
